@@ -7,6 +7,7 @@ requires-python = ">=3.12"
 dependencies = [
     "fastapi>=0.115.13",
     "strawberry-graphql>=0.275.0",
+    "tortoise-orm[asyncpg]>=0.25.1",
     "uvicorn>=0.34.3",
     "websockets>=15.0.1",
 ]

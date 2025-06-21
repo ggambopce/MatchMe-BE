@@ -5,10 +5,12 @@
 - strawberry-graphql 
 - uvicorn 
 - websockets
+- tortoise-orm[asyncpg]
 
 ## uv 사용 방법
 ### 메뉴얼 
-- https://docs.astral.sh/uv/
+- https://docs.astral.sh/uv/ [메뉴얼]
+- https://docs.astral.sh/uv/#installation [설치 방법]
 
 ### 패키지 추가
 ```bash
@@ -24,10 +26,15 @@ uv pip freeze > requirements.txt
 uv run ./src/main.py
 ````
 
+## FastAPI
+
+### 테스트 페이지
+- http://127.0.0.1:7070/docs
+- http://127.0.0.1:7070/redoc
+
 ## GraphQL
 ### GraphQL Playground
 - http://127.0.0.1:7070/graphql
-
 
 ## 도커
 - 현재 데이터베이스만 구축 / postgres:15
