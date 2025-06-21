@@ -1,0 +1,14 @@
+services:
+  db:
+    image: postgres:15
+    container_name: postgres-db
+    restart: always
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: app
+      POSTGRES_PASSWORD: 1234
+      POSTGRES_DB: matchme
+    volumes:
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql     # 초기화 SQL 실행
+      - ./db/data:/var/lib/postgresql/data   

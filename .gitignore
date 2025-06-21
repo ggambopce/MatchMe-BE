@@ -22,3 +22,6 @@ alembic/versions/
 
 # Pydantic cache
 __pydantic__/ 
+
+
+/db/data/
