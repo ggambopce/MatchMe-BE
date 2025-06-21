@@ -1,0 +1,24 @@
+# Python
+__pycache__/
+*.py[cod]
+*.sqlite3
+*.log
+
+# Virtual Environment
+venv/
+ENV/
+
+# VSCode 설정 파일
+.vscode/
+
+# 환경 변수
+.env
+
+# Alembic
+alembic/versions/
+
+# macOS
+.DS_Store
+
+# Pydantic cache
+__pydantic__/ 
