@@ -1,22 +1,21 @@
 from fastapi import FastAPI
 
 from tortoise.contrib.fastapi import register_tortoise
+from graphql_router.schema import graphql_app
 
-from graphql_router import graphql
-from fastapi_router import test
 
 app = FastAPI()
 
 register_tortoise(
     app,
     db_url="postgres://app:1234@localhost:5432/matchme",  # 또는 PostgreSQL URL
-    modules={"models": ["db.models"]},  # 경로 주의
+    modules={"models": ["db.models","db.profile.models"]},  # 경로 주의
     generate_schemas=True,
     add_exception_handlers=True
 )
 
-app.include_router(graphql.graphql_app, prefix="/graphql")
-app.include_router(test.router, prefix="/api")
+app.include_router(graphql_app, prefix="/graphql")
+
 
 if __name__ == "__main__":
     import uvicorn
