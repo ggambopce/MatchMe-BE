@@ -1,8 +1,14 @@
 # graphql_router/resolvers/profile_resolver.py
 
 from db.profile.models import  Profile, ContactProfile, UserChoice
-from db.models import User
-from graphql_router.profile.types import ProfileInput, ContactProfileInput, UserChoiceInput, ProfileType, ContactProfileType
+from src.db.user.models import User
+from db.match.models import MatchInfo
+from graphql_router.profile.types import ProfileInput, ContactProfileInput, UserChoiceInput, ProfileType, ContactProfileType, MatchProfileResponse
+from tortoise.exceptions import DoesNotExist
+
+# Query나 Mutation에서 호출되는 비즈니스 로직 담당 계층
+# DB 접근, 데이터 가공, 외부 API 호출 등 포함
+# 복잡한 로직은 이 계층에서 처리하고 결과만 Query에 넘김
 
 class ProfileResolver:
 
@@ -32,7 +38,6 @@ class ProfileResolver:
         return {"code": "SU", "message": "프로필이 성공적으로 생성되었습니다."}
 
 # 내 프로필 조회 리졸버
-class ProfileResolver:
     @staticmethod
     async def get_profile(user_id: str) -> ProfileType:
         profile = await Profile.get(user__id=user_id).prefetch_related("user")
@@ -59,3 +64,32 @@ class ProfileResolver:
             temperament_report=profile.temperament_report,
             contact_profile=contact_profile_data
         )    
+    
+# 매칭 프로필 조회 리졸버
+    @staticmethod
+    async def get_match_profile(user_id: str) -> MatchProfileResponse:
+        try:
+            # 1. 현재 유저와 매칭된 이성 프로필 조회 (가장 최근 1건)
+            match = await MatchInfo.get(user__id=user_id).prefetch_related("matched_profile")
+
+            # 2. 매칭된 이성 프로필 정보 가져오기
+            profile = await Profile.get(id=match.matched_profile.id)
+
+            return MatchProfileResponse(
+                profile_id=profile.id,
+                nickname=profile.nickname,
+                temperament=profile.temperament,
+                enneagram=profile.enneagram,
+                introduction=profile.introduction,
+                age=profile.birth_date,
+                job=profile.job,
+                profile_image_url=profile.profile_image_url,
+                location=profile.location,
+                relationship_intent=profile.relationship_intent,
+                temperament_report=profile.temperament_report,
+                match_score=match.match_score,
+                match_report=match.match_report
+            )
+
+        except DoesNotExist:
+            raise Exception("매칭된 프로필이 존재하지 않습니다.")

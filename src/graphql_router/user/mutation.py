@@ -1,7 +1,7 @@
 import strawberry
 from datetime import datetime
-from db.models import User
-from graphql_router.types import UserType
+from src.db.user.models import User
+from src.graphql_router.user.types import UserType
 
 @strawberry.type
 class Mutation:
