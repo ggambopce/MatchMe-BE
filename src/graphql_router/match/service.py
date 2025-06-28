@@ -2,7 +2,7 @@ from random import random
 
 from graphql_router.profile.types import MatchProfileResponse
 from graphql_router.match.types import MatchResultType
-from graphql_router.match.enum import TEMPERAMENT_PAIR_REPORT_MAP
+from graphql_router.match.enum import MATCH_REPORT_MAP
 from graphql_router.profile.enum import TEMPERAMENT_MAP, ENNEAGRAM_MAP
 from graphql_router.profile.types import UserChoiceInput
 
@@ -26,7 +26,9 @@ class MatchService:
     @staticmethod
     async def set_match_score_match_report(
         user1_choices: list[UserChoiceInput],
-        user2_choices: list[UserChoiceInput]
+        user2_choices: list[UserChoiceInput],
+        user1_gender: str,
+        user2_gender: str
         ) -> MatchProfileResponse:
         # 선택값 딕셔너리로 정리
         u1 = {c.question_number: c.choice_number for c in user1_choices}
@@ -46,8 +48,14 @@ class MatchService:
         else:
             score += 20
 
-        match_report = TEMPERAMENT_PAIR_REPORT_MAP.get((t1, t2)) or TEMPERAMENT_PAIR_REPORT_MAP.get((t2, t1)) or "기질 궁합 리포트 없음"
-
+        # 성별 기준으로 남자가 왼쪽, 여자가 오른쪽으로 순서 맞춤
+        # 매치 리포트 
+        if user1_gender == "male" and user2_gender == "female":
+            match_key = (t1, t2)
+        else: 
+            match_key = (t2, t1)
+        match_report = MATCH_REPORT_MAP.get(match_key, "기질 궁합 리포트 없음")
+        
         ''' Enneagram 애니어그램(Q2)
         25점인 경우 - 합쳐서 10인 경우 
         1번-9번/2번-8번/...5번-5번/...../9번-1번
@@ -96,3 +104,5 @@ class MatchService:
             match_score=score,
             match_report=match_report
         )
+        
+        

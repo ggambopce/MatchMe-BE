@@ -45,6 +45,7 @@ class ProfileType:
     temperament: str
     enneagram: str
     introduction: str
+    gender: str
     age: str
     job: str
     profile_image_url: str

@@ -8,7 +8,7 @@ from graphql_router.profile.types import (
 from graphql_router.profile.resolver import ProfileResolver
 
 @strawberry.type
-class Mutation:
+class ProfileMutation:
     @strawberry.mutation
     async def create_profile(
         user_id: str,
