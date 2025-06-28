@@ -69,3 +69,9 @@ class MatchProfileResponse:
     temperament_report: str
     match_score: int
     match_report: str
+
+# 쌍방 수락 시 프로필 추가 정보 조회(연락처 정보)
+@strawberry.type
+class ContactProfileResponse:
+    phone_number: str
+    sns_url: str

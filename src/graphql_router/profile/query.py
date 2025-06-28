@@ -1,7 +1,6 @@
 import strawberry
-from graphql_router.profile.types import ProfileType
+from graphql_router.profile.types import ProfileType, MatchProfileResponse, ContactProfileResponse
 from graphql_router.profile.resolver import ProfileResolver
-from graphql_router.profile.types import MatchProfileResponse
 
 
 # 클라이언트가 요청할 수 있는 조회용 기능(Query) 를 정의
@@ -19,6 +18,10 @@ class Query:
     @strawberry.field
     async def get_match_profile(self, user_id: str) -> MatchProfileResponse:
         return await ProfileResolver.get_match_profile(user_id)
+    
+    @strawberry.field
+    async def get_matched_contact_profile(self, user_id: str) -> ContactProfileResponse:
+        return await ProfileResolver.get_matched_contact_profile(user_id)
     
     @strawberry.field
     def ping(self) -> str:

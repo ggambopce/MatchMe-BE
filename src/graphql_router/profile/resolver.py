@@ -3,7 +3,7 @@
 from db.profile.models import  Profile, ContactProfile, UserChoice
 from src.db.user.models import User
 from db.match.models import MatchInfo
-from graphql_router.profile.types import ProfileInput, ContactProfileInput, UserChoiceInput, ProfileType, ContactProfileType, MatchProfileResponse
+from graphql_router.profile.types import ProfileInput, ContactProfileInput, UserChoiceInput, ProfileType, ContactProfileType, MatchProfileResponse, ContactProfileResponse
 from tortoise.exceptions import DoesNotExist
 
 # Query나 Mutation에서 호출되는 비즈니스 로직 담당 계층
@@ -93,3 +93,25 @@ class ProfileResolver:
 
         except DoesNotExist:
             raise Exception("매칭된 프로필이 존재하지 않습니다.")
+
+# 쌍방 수락 시 프로필 추가 정보 조회
+    @staticmethod
+    async def get_matched_contact_profile(user_id: str) -> ContactProfileResponse:
+        try:
+            # 1. 매칭 정보 조회
+            match = await MatchInfo.get(user__id=user_id).prefetch_related("matched_profile")
+
+            # 2. 쌍방 수락 여부 확인 (예시 플래그: is_accepted_by_both)
+            if not match.is_accepted_by_both:
+                raise Exception("아직 쌍방 수락되지 않았습니다.")
+
+            # 3. 매칭된 상대의 연락처 정보 가져오기
+            contact = await ContactProfile.get(user=match.matched_profile.user)
+
+            return ContactProfileResponse(
+                phone_number=contact.phone_number,
+                sns_url=contact.sns_url
+            )
+
+        except DoesNotExist:
+            raise Exception("연락처 정보를 찾을 수 없습니다.")         
