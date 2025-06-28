@@ -1,4 +1,5 @@
-# graphql_router/match/service.py
+from random import random
+
 from graphql_router.profile.types import MatchProfileResponse
 from graphql_router.match.types import MatchResultType
 from graphql_router.match.enum import TEMPERAMENT_PAIR_REPORT_MAP
@@ -8,18 +9,17 @@ from graphql_router.profile.types import UserChoiceInput
 
 class MatchService:
     
-    # 메인 매칭 로직
+    # 매치 기준 : 성별 랜던 매칭
     @staticmethod
-    async def matching(user_id: str) -> MatchResultType:
-        """
-        매칭 로직을 정의한다.
-        """
-        # TODO: 
-        # TODO: 
-        # TODO: 각 결과를 MatchProfileResponse과 MatchResultType에 반영
+    async def match_two_profiles() -> MatchProfileResponse:
+        males = await MatchProfileResponse.filter(gender="male")
+        females = await MatchProfileResponse.filter(gender="female")
 
-        # 예시 반환
-        return None
+        if not males or not females:
+            raise Exception("성별이 다른 프로필이 필요합니다.")
+
+        return random.profile_id(males), random.profile_id(females)
+
 
 
     # 매치 스코어와 매치리포트 생성 메서드

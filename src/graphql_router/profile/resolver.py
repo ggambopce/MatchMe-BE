@@ -3,6 +3,7 @@
 from db.profile.models import  Profile, ContactProfile, UserChoice
 from src.db.user.models import User
 from db.match.models import MatchResult
+from graphql_router.profile.service import ProfileService
 from graphql_router.profile.types import ProfileInput, ContactProfileInput, UserChoiceInput, ProfileType, ContactProfileType, MatchProfileResponse, ContactProfileResponse
 from tortoise.exceptions import DoesNotExist
 
@@ -23,9 +24,19 @@ class ProfileResolver:
         existing = await Profile.get_or_none(user=user)
         if existing:
             return {"code": "ALREADY_EXISTS", "message": "이미 프로필이 존재합니다."}
+        
+        # 설문 기반 기질, 에니어그램 자동 결정
+        analyzed = await ProfileService.setMyPofile([c.__dict__ for c in choices])
 
-        # 프로필 저장
-        await Profile.create(user=user, **profile.__dict__)
+
+        # Profile 생성 시 자동 분석된 값도 포함
+        await Profile.create(
+            user=user,
+            temperament=analyzed.temperament,
+            enneagram=analyzed.enneagram,
+            temperament_report=analyzed.temperament_report
+            **profile.__dict__
+    )
 
         # 연락처 저장 (optional)
         if contact:
