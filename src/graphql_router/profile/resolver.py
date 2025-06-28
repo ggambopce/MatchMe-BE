@@ -2,7 +2,7 @@
 
 from db.profile.models import  Profile, ContactProfile, UserChoice
 from src.db.user.models import User
-from db.match.models import MatchInfo
+from db.match.models import MatchResult
 from graphql_router.profile.types import ProfileInput, ContactProfileInput, UserChoiceInput, ProfileType, ContactProfileType, MatchProfileResponse, ContactProfileResponse
 from tortoise.exceptions import DoesNotExist
 

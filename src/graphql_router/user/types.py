@@ -1,8 +1,13 @@
 import strawberry
 from datetime import datetime
 
+#uuid 작성
+@strawberry.input
+class UserInput:
+    user_id: str
+    created_at: datetime
+
 @strawberry.type
 class UserType:
-    id: str
-    name: str | None
+    user_id: str
     created_at: datetime
