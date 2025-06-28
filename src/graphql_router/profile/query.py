@@ -18,7 +18,7 @@ class Query:
     @strawberry.field
     async def get_match_profile(self, user_id: str) -> MatchProfileResponse:
         return await ProfileResolver.get_match_profile(user_id)
-    
+    # 쌍방 수락시 프로필 추가 정보 조회(연락처 정보)
     @strawberry.field
     async def get_matched_contact_profile(self, user_id: str) -> ContactProfileResponse:
         return await ProfileResolver.get_matched_contact_profile(user_id)
