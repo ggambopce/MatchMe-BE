@@ -70,7 +70,7 @@ class ProfileResolver:
     async def get_match_profile(user_id: str) -> MatchProfileResponse:
         try:
             # 1. 현재 유저와 매칭된 이성 프로필 조회 (가장 최근 1건)
-            match = await MatchInfo.get(user__id=user_id).prefetch_related("matched_profile")
+            match = await MatchResult.get(user__id=user_id).prefetch_related("matched_profile")
 
             # 2. 매칭된 이성 프로필 정보 가져오기
             profile = await Profile.get(id=match.matched_profile.id)
@@ -99,7 +99,7 @@ class ProfileResolver:
     async def get_matched_contact_profile(user_id: str) -> ContactProfileResponse:
         try:
             # 1. 매칭 정보 조회
-            match = await MatchInfo.get(user__id=user_id).prefetch_related("matched_profile")
+            match = await MatchResult.get(user__id=user_id).prefetch_related("matched_profile")
 
             # 2. 쌍방 수락 여부 확인 (예시 플래그: is_accepted_by_both)
             if not match.is_accepted_by_both:

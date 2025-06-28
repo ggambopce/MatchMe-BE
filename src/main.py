@@ -9,7 +9,7 @@ app = FastAPI()
 register_tortoise(
     app,
     db_url="postgres://app:1234@localhost:5432/matchme",  # 또는 PostgreSQL URL
-    modules={"models": ["db.models","db.profile.models"]},  # 경로 주의
+    modules={"models": ["db.user.models","db.profile.models","db.match.models"]},  # 경로 주의
     generate_schemas=True,
     add_exception_handlers=True
 )

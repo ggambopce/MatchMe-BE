@@ -9,11 +9,11 @@ class MatchResult(Model):
 
     # 프로필 1
     profile1 = fields.ForeignKeyField(
-        "models.Profile", related_name="match_results", on_delete=fields.CASCADE
+        "models.Profile", related_name="match_results_as_profile1", on_delete=fields.CASCADE
     )
     # 프로필 2
     profile2 = fields.ForeignKeyField(
-        "models.Profile", related_name="match_results", on_delete=fields.CASCADE
+        "models.Profile", related_name="match_results_as_profile2", on_delete=fields.CASCADE
     )
 
     # 점수 및 보고서
