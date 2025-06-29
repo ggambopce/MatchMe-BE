@@ -46,7 +46,7 @@ class MatchProfile(Model):
     enneagram = fields.CharField(max_length=30)
     introduction = fields.TextField()
     gender = fields.CharField(max_length=10)
-    age = fields.CharField(max_length=10)
+    birth_date = fields.CharField(max_length=10)
     job = fields.CharField(max_length=50)
     profile_image_url = fields.CharField(max_length=255)
     location = fields.CharField(max_length=100)

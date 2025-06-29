@@ -1,8 +1,8 @@
 # graphql_router/resolvers/profile_resolver.py
 
 from db.profile.models import  Profile, ContactProfile, UserChoice
-from src.db.user.models import User
 from db.match.models import MatchResult
+from db.user.models import User
 from graphql_router.profile.service import ProfileService
 from graphql_router.profile.types import ProfileInput, ContactProfileInput, UserChoiceInput, ProfileType, ContactProfileType, MatchProfileResponse, ContactProfileResponse
 from tortoise.exceptions import DoesNotExist
@@ -16,43 +16,45 @@ class ProfileResolver:
     # 내 프로필 작성 리졸버
     @staticmethod
     async def create_profile(user_id: str, profile: ProfileInput, contact: ContactProfileInput | None, choices: list[UserChoiceInput]):
-        user = await User.get_or_none(id=user_id)
+        
+        user = await User.get_or_none(user_id=user_id)
         if not user:
             return {"code": "ER", "message": "사용자를 찾을 수 없습니다."}
-
-        # 이미 프로필이 있는 경우 처리 (예: 업데이트 or 무시)
-        existing = await Profile.get_or_none(user=user)
-        if existing:
-            return {"code": "ALREADY_EXISTS", "message": "이미 프로필이 존재합니다."}
         
         # 설문 기반 기질, 에니어그램 자동 결정
         analyzed = await ProfileService.setMyPofile([c.__dict__ for c in choices])
 
 
         # Profile 생성 시 자동 분석된 값도 포함
-        await Profile.create(
+        created_profile = await Profile.create(
             user=user,
             temperament=analyzed.temperament,
             enneagram=analyzed.enneagram,
-            temperament_report=analyzed.temperament_report
-            **profile.__dict__
-    )
+            temperament_report=analyzed.temperament_report,
+            **profile.__dict__  # ex: nickname, gender 등
+        )
 
-        # 연락처 저장 (optional)
+        # 연락처 저장 (Profile 기준 연관)
         if contact:
-            await ContactProfile.create(user=user, **contact.__dict__)
+            await ContactProfile.create(
+                profile=created_profile,
+                **contact.__dict__
+            )
 
-        # 설문 응답 저장
+        # 설문 응답 저장 (Profile 기준 연관)
         for choice in choices:
-            await UserChoice.create(user=user, question_number=choice.question_number, choice_number=choice.choice_number)
-
+            await UserChoice.create(
+                profile=created_profile,
+                question_number=choice.question_number,
+                choice_number=choice.choice_number
+            )
         return {"code": "SU", "message": "프로필이 성공적으로 생성되었습니다."}
 
 # 내 프로필 조회 리졸버
     @staticmethod
     async def get_profile(user_id: str) -> ProfileType:
-        profile = await Profile.get(user__id=user_id).prefetch_related("user")
-        contact_profile = await ContactProfile.filter(user=profile.user).first()
+        profile = await Profile.get(user_id=user_id).prefetch_related("user")
+        contact_profile = await ContactProfile.filter(profile_id=profile.id).first()
         
         contact_profile_data = None
         if contact_profile:
@@ -67,6 +69,7 @@ class ProfileResolver:
             temperament=profile.temperament,
             enneagram=profile.enneagram,
             introduction=profile.introduction,
+            gender=profile.gender,
             age=profile.birth_date,
             job=profile.job,
             profile_image_url=profile.profile_image_url,

@@ -17,6 +17,9 @@ class ProfileMutation:
         user_choice_list: list[UserChoiceInput] = []
     ) -> CreateProfileResponse:
         result = await ProfileResolver.create_profile(
-            user_id, profile, contact_profile, user_choice_list
+            user_id=user_id,
+            profile=profile,
+            contact=contact_profile,
+            choices=user_choice_list
         )
         return CreateProfileResponse(**result)

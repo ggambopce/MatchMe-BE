@@ -1,4 +1,4 @@
-from graphql_router.profile.types import ProfileType
+from graphql_router.profile.dataclass import ProfileServiceResponse
 from graphql_router.profile.enum import TEMPERAMENT_MAP, ENNEAGRAM_MAP, TEMPERAMENT_REPORT_MAP
 
 class ProfileService:
@@ -8,7 +8,7 @@ class ProfileService:
     # 2번에서 에니어그램 유형 결정
     # 프로필 작성을 위해서 우선 2개만 결정
     @staticmethod
-    async def setMyPofile(user_choice_list: list[dict]) -> ProfileType:
+    async def setMyPofile(user_choice_list: list[dict]) -> ProfileServiceResponse:
         temperament = None
         enneagram = None
 
@@ -24,7 +24,7 @@ class ProfileService:
                 enneagram = ENNEAGRAM_MAP.get(cn)
 
         # 결과를 ProfileType에 매핑
-        return ProfileType(
+        return ProfileServiceResponse(
             temperament=temperament,
             enneagram=enneagram,
             temperament_report=temperament_report
