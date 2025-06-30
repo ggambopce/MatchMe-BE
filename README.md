@@ -6,6 +6,7 @@
 - uvicorn 
 - websockets
 - tortoise-orm[asyncpg]
+- apscheduler
 
 ## uv 사용 방법
 ### 메뉴얼 
